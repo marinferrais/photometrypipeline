@@ -30,6 +30,9 @@ import argparse
 import sqlite3
 from astroquery.jplhorizons import Horizons
 from astropy.io import ascii
+from astropy.table import Table
+
+from parse_name import parse_name
 
 try:
     from astroquery.vizier import Vizier
@@ -188,7 +191,15 @@ def moving_primary_target(catalogs, man_targetname, offset, is_asteroid=None,
         targetname = cat.obj.replace('_', ' ')
         if man_targetname is not None:
             targetname = man_targetname.replace('_', ' ')
+        else:
+            targetnames = parse_name(targetname)[0]
+            if targetnames['number'] != '':
+                targetname = str(targetnames['number'])
+            else:
+                targetname = targetnames['desig']
+        cat.obj = targetname
         for smallbody in [True, False]:
+            #obj = Horizons(targetname,
             obj = Horizons(targetname.replace('_', ' '),
                            id_type={True: 'smallbody',
                                     False: 'majorbody'}[smallbody],
@@ -223,6 +234,9 @@ def moving_primary_target(catalogs, man_targetname, offset, is_asteroid=None,
         targetname = cat.obj.replace('_', ' ')
         if man_targetname is not None:
             targetname = man_targetname.replace('_', ' ')
+            cat.obj = targetname
+        else:
+            targetname = parse_name(targetname)[1]
             cat.obj = targetname
         obj = Horizons(targetname.replace('_', ' '),
                        id_type={True: 'smallbody',
@@ -449,7 +463,7 @@ def serendipitous_asteroids(catalogs, display=True):
 
 def distill(catalogs, man_targetname, offset, fixed_targets_file, posfile,
             rejectionfilter='pos', display=False, diagnostics=False,
-            variable_stars=False, asteroids=False):
+            variable_stars=False, asteroids=False, maxflag=3):
     """
     distill wrapper
     """
@@ -680,7 +694,7 @@ def distill(catalogs, man_targetname, offset, fixed_targets_file, posfile,
                         reject_this_target = True
 
                 if reject_this_target:
-                    outf.write('#')
+                    outf.write('')
                 else:
                     outf.write(' ')
                     output[target].append(dat)
@@ -702,7 +716,7 @@ def distill(catalogs, man_targetname, offset, fixed_targets_file, posfile,
                            ('%s ' % catalogname) +
                            ('%s ' % filtername) +
                            ('%3d ' % dat[14]) +
-                           ('%s' % dat[13].split(';')[0]) +
+                           ('%s' % dat[13].split(';')[0]).replace(' ','_') +
                            ('%10s ' % _pp_conf.photmode) +
                            ('%4.2f\n' % (dat[15]*3600)))
                 output['targetframes'][target].append(dat[10][:-4]+'fits')
@@ -736,8 +750,89 @@ def distill(catalogs, man_targetname, offset, fixed_targets_file, posfile,
             print('extracting thumbnail images')
         logging.info(' ~~~~~~~~~ creating diagnostic output')
         diag.add_results(output)
+    save_phot(os.getcwd(), target=man_targetname, maxflag=maxflag)
 
     return output
+
+
+def save_phot(root, target=None, photerr=False, maxflag=3):
+    from glob import glob
+    # save results as epochJD, mag , mag err
+    night = root.split('/')[-1]
+    night = night.replace('ACP->NTM', 'TN')
+    night = night.replace('exoBB', 'Exo')
+    #night = night.replace('-', '')
+    mdate=False
+    if mdate:
+        date = night.split('_')[-2].split('-').merge()
+    if not target:
+        target = night.split('_')[0].lstrip('0')
+    if target == '2025_N1':
+        target = 'ATLAS'
+    try:
+        print(f"> Try reading photometry from : photometry_{target.lstrip('0')}*.dat") 
+        phot_file = glob(f"photometry_{target.lstrip('0')}*.dat")[0]
+    except IndexError:
+        try:
+            print(f'> Try reading photometry from : photometry__{target}*.dat') 
+            phot_file = glob(f'photometry__{target}*.dat')[0]
+        except IndexError:
+            targetname2 = f'{target[:4]}_{target[4:]}'
+            print(f'> Try reading photometry from : photometry_*_{targetname2}*.dat') 
+            phot_file = glob(f'photometry_*_{targetname2}*.dat')[0]
+    
+    # DAT file 
+    phot_res = np.genfromtxt(phot_file)
+    if len(phot_res.shape) == 1:
+        phot_res = np.reshape(phot_res, (1, -1))
+    ofile = night+'.dat'
+    print(f'> Saving phot file to {ofile}')
+    if photerr: # extracting the photometric errors
+        data = np.hstack((phot_res[:, 1:3], phot_res[:, 14:15]))
+        np.savetxt(ofile, data, fmt=['%.7f','%.4f','%.4f'])
+    else: # extracting the magnitude calibration errors
+        try:
+            np.savetxt(ofile, phot_res[:, 1:4], fmt=['%.7f','%.4f','%.4f'])
+        except AttributeError:
+            print('No data?')
+
+    # OBS table
+    name_dict = {'ACP->NTM':'Z53',
+                 'TRAPPIST':'I40',
+                 'Artemis':'Z25',
+                 'ACP->Artemis':'Z25',
+                 'Spacewatch-0.9m':'691',
+                 'Spacewatch_0.9-m_f/3_prime_focus':'691',
+                }
+    # 4954 Eric special case:
+    if target == '4954':
+         maxflag = 3
+    elif target == '887' or target == '602' or target == '2010EW45' or target == '1999XA143': # 
+         maxflag = 4
+    t = Table.read(phot_file,format='ascii.commented_header')
+    #print(target)
+    print(t)
+    t = t[t['[8]'] <= maxflag]
+    t['targetname'] = [target] * len(t)
+    t['filter'] = [night.split('_')[-1]] * len(t)
+    cols = ['targetname','julian_date','mag','sig','in_sig','filter','[7]','[5]','[9]']
+    t = t[cols]
+    t['julian_date'].name = 'epoch'
+    t['sig'].name = 'err_abs'
+    t['in_sig'].name = 'err_pho'
+    t['[7]'].name = 'band'
+    t['[5]'].name = 'texp'
+    t['[9]'].name = 'observatory'
+    t['observatory'] = [name_dict[obs] for obs in t['observatory']]
+
+    #t[t['mag'] > 100]['mag'] = 99.99
+
+    t.pprint()
+    t.write(night+'.obs', format='ascii.rst', overwrite=True, comment=False)
+    print(f"> Saving phot table to {night+'.obs'}")
+
+
+
 
 
 if __name__ == '__main__':
@@ -759,6 +854,9 @@ if __name__ == '__main__':
     parser.add_argument('-reject',
                         help='schemas for target rejection',
                         nargs=1, default='pos')
+    parser.add_argument('-mf','--maxflag',
+                        help='Maximum acceptable sextractor flag',
+                        type=int, default=3)
     parser.add_argument('images', help='images to process', nargs='+')
     args = parser.parse_args()
     man_targetname = args.target
@@ -768,6 +866,7 @@ if __name__ == '__main__':
     asteroids = args.asteroids
     posfile = args.positions
     rejectionfilter = args.reject
+    maxflag = args.maxflag
     filenames = args.images
 
     # check if input filenames is actually a list
@@ -781,4 +880,7 @@ if __name__ == '__main__':
                          posfile, rejectionfilter,
                          display=True, diagnostics=True,
                          variable_stars=variable_stars,
-                         asteroids=asteroids)
+                         asteroids=asteroids,
+                         maxflag=maxflag)
+
+    #save_phot(os.getcwd(), target=man_targetname)

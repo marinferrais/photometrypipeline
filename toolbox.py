@@ -190,8 +190,16 @@ def get_binning(header, obsparam):
             binning_y = float(header[obsparam['binning'][1].
                                      replace('#CH#', channel)])
     else:
-        binning_x = header[obsparam['binning'][0]]
-        binning_y = header[obsparam['binning'][1]]
+        try:
+            binning_x = header[obsparam['binning'][0]]
+            binning_y = header[obsparam['binning'][1]]
+        except KeyError:
+            try:
+                binning_x = header['XBINNING']
+                binning_y = header['YBINNING']
+            except KeyError:
+                binning_x = 1
+                binning_y = 1
 
     return (binning_x, binning_y)
 

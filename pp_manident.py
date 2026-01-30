@@ -21,7 +21,8 @@ from PIL import ImageTk
 from PIL import ImageDraw
 import argparse
 from astropy.io import fits
-from scipy.ndimage import interpolation as interp
+#from scipy.ndimage import interpolation as interp
+import scipy.ndimage as ndimage
 from scipy.interpolate import InterpolatedUnivariateSpline
 
 # only import if Python3 is used
@@ -34,6 +35,9 @@ if sys.version_info > (3, 0):
 
 # pipeline-specific modules
 from catalog import *
+
+#
+from image_scaling import z_scale
 
 
 # class structure for Tkinter control
@@ -148,6 +152,7 @@ class Clicker(object):
             # read image data
             hdulist = fits.open(filename, ignore_missing_end=True)
             imgdat = hdulist[0].data
+            telescope = hdulist[0].header['TEL_KEYW']
 
             # median = numpy.median(imgdat)
             # std    = numpy.std(imgdat)
@@ -161,10 +166,12 @@ class Clicker(object):
                                    int(imgdat.shape[0]*0.25):
                                    int(imgdat.shape[0]*0.75)])
 
-            imgdat = old_div(numpy.clip(imgdat, median-0.5*std,
-                                        median+0.5*std), (old_div(std, 256)))
-            imgdat = imgdat - numpy.min(imgdat)
-            imgdat = interp.zoom(imgdat, self.zoom)
+            if telescope != 'Spacewatch 0.9-m f/3 prime focus':
+                imgdat = old_div(numpy.clip(imgdat, median-0.5*std,
+                                            median+0.5*std), (old_div(std, 256)))
+                imgdat = imgdat - numpy.min(imgdat)
+            #imgdat = z_scale(imgdat, c=0.5)
+            imgdat = ndimage.zoom(imgdat, self.zoom)
 
             self.images.append(Image.fromarray(imgdat))
 

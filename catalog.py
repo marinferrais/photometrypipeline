@@ -577,8 +577,10 @@ class catalog(object):
                     self.catalogname))
                 return 0
 
+
             # rename column names using PP conventions
-            self.data.rename_column('recno', 'ident')
+            #self.data.rename_column('recno', 'ident')
+            self.data['ident'] = np.arange(len(self.data))
             self.data.rename_column('RAJ2000', 'ra_deg')
             self.data.rename_column('DEJ2000', 'dec_deg')
             self.data.rename_column('e_RAJ2000', 'e_ra_deg')

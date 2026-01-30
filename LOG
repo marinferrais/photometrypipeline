@@ -1,0 +1,8 @@
+__init__.py: CACHEDIR=/home/ferrais/.cache/matplotlib [07/10/2019 16:27:48]
+font_manager.py: Using fontManager instance from /home/ferrais/.cache/matplotlib/fontlist-v300.json [07/10/2019 16:27:48]
+pyplot.py: Loaded backend TkAgg version unknown. [07/10/2019 16:27:48]
+pyplot.py: Loaded backend agg version unknown. [07/10/2019 16:27:48]
+__init__.py: CACHEDIR=/home/ferrais/.cache/matplotlib [07/10/2019 16:28:53]
+font_manager.py: Using fontManager instance from /home/ferrais/.cache/matplotlib/fontlist-v300.json [07/10/2019 16:28:53]
+pyplot.py: Loaded backend TkAgg version unknown. [07/10/2019 16:28:53]
+pyplot.py: Loaded backend agg version unknown. [07/10/2019 16:28:53]

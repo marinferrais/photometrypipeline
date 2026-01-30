@@ -66,6 +66,7 @@ def create_photometrycatalog(ra_deg, dec_deg, rad_deg, filtername,
         cat = catalog(catalogname, display)
 
         # load catalog
+        print(ra_deg, dec_deg)
         n_sources = cat.download_catalog(ra_deg, dec_deg, rad_deg,
                                          max_sources,
                                          use_all_stars=use_all_stars,
@@ -268,10 +269,10 @@ def derive_zeropoints(ref_cat, catalogs, filtername, minstars_external,
         if 'idx' not in ref_cat.fields:
             ref_cat.add_field('idx',
                               list(range(ref_cat.shape[0])),
-                              field_type=np.int)
+                              field_type=np.int32)
         if 'idx' not in cat.fields:
             cat.add_field('idx', list(range(cat.shape[0])),
-                          field_type=np.int)
+                          field_type=np.int32)
 
         match = ref_cat.match_with(
             cat,
@@ -407,7 +408,7 @@ def derive_zeropoints(ref_cat, catalogs, filtername, minstars_external,
             caldata_filename = cat.catalogname[:-5]+conf.save_caldata_suffix
             matched_ref_cat = ref_cat[match[0][5].data]
             # build `fit` column that indicates whether star is used in fit
-            used_in_fit = np.zeros(len(matched_ref_cat), dtype=np.int)
+            used_in_fit = np.zeros(len(matched_ref_cat), dtype=np.int32)
             used_in_fit[clipping_steps[idx][3]] = 1
             matched_ref_cat.add_column(Column(used_in_fit, 'fit'))
             matched_ref_cat.remove_column('idx')
@@ -576,7 +577,7 @@ def calibrate(filenames, minstars, manfilter, manualcatalog,
     if filtername is not None and magzp is None:
         ref_cat = create_photometrycatalog(ra_deg, dec_deg, rad_deg,
                                            filtername, preferred_catalogs,
-                                           max_sources=2e4, solar=solar,
+                                           max_sources=2e5, solar=solar,
                                            use_all_stars=use_all_stars,
                                            display=display)
 

@@ -673,8 +673,9 @@ class Photometry_Diagnostics(Diagnostics_Html):
 
         ax.set_title('Median PSF FWHM per Frame')
         ax.set_xlabel('Minutes after {:s} UT'.format(
-            Time(frame_midtimes.min(), format='jd',
-                 out_subfmt='date_hm').iso))
+             Time(frame_midtimes.min(), format='jd').to_value('iso', subfmt='date_hm')))
+        #    Time(frame_midtimes.min(), format='jd',   # deprecated astropy v4
+        #         out_subfmt='date_hm').iso))
         ax.set_ylabel('Point Source FWHM (px)')
         ax.scatter((frame_midtimes-frame_midtimes.min())*1440,
                    fwhm, marker='o',
@@ -794,8 +795,7 @@ class Calibration_Diagnostics(Diagnostics_Html):
         ax.errorbar((times-times.min())*1440, zp, yerr=zperr, linestyle='',
                     color='blue', marker='s', capsize=3)
         ax.set_xlabel('Minutes after {:s} UT'.format(
-            Time(times.min(), format='jd',
-                 out_subfmt='date_hm').iso))
+            Time(times.min(), format='jd').to_value('iso', subfmt='date_hm')))
         ax.set_ylabel(
             '{:s}-Band Magnitude Zeropoints (mag)'.format(
                 data['filtername']))
@@ -1228,8 +1228,7 @@ class Distill_Diagnostics(Diagnostics_Html):
             fig, ax = plt.subplots()
             ax.set_title(target.replace('_', ' '))
             ax.set_xlabel('Minutes after {:s} UT'.format(
-                Time(midtimes.min(), format='jd',
-                     out_subfmt='date_hm').iso))
+                Time(midtimes.min(), format='jd').to_value('iso', subfmt='date_hm')))
             ax.set_ylabel('Magnitude')
             ax.errorbar((midtimes-midtimes.min())*1440,
                         [dat[7] for dat in data[target]],

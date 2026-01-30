@@ -114,6 +114,15 @@ def combine(filenames, obsparam, comoving, targetname,
         ref_ra_deg -= float(header['TRAOFF'])/3600
         ref_dec_deg -= float(header['TDECOFF'])/3600
 
+
+    try:
+        xbin = header['XBINNING']
+        ybin = header['YBINNING']
+    except KeyError:
+        xbin = 1
+        ybin = 1
+    filt = header['FILTER']
+
     hdulist.close()
 
     # modify individual frames if comoving == True
@@ -231,8 +240,9 @@ def combine(filenames, obsparam, comoving, targetname,
                     'Y -imageout_name %s -interpolate Y -subtract_back %s ' +
                     '-weight_type NONE -copy_keywords %s -write_xml N ' +
                     '-CENTER_TYPE MOST %s') %
-                   ({'median': 'MEDIAN', 'average': 'AVERAGE',
-                     'clipped': 'CLIPPED -CLIP_AMPFRAC 0.2 -CLIP_SIGMA 0.1 '}
+                   ({'median': 'MEDIAN', 'average': 'AVERAGE', 'sum': 'SUM',
+                     'clipped': 'CLIPPED -CLIP_AMPFRAC 0.2 -CLIP_SIGMA 0.1 ',
+                      'max': 'MAX'}
                     [combine_method],
                     outfile_name,
                     {True: 'Y', False: 'N'}[backsub],
@@ -274,6 +284,9 @@ def combine(filenames, obsparam, comoving, targetname,
     hdulist[0].header['COMBO_N'] = (len(filenames), 'PP: N files combo')
     hdulist[0].header['COMBO_M'] = (combine_method, 'PP: combo method')
     hdulist[0].header['COMOVE'] = (str(comoving), 'PP: comoving?')
+    hdulist[0].header['XBINNING'] = int(xbin)
+    hdulist[0].header['YBINNING'] = int(ybin)
+    hdulist[0].header['FILTER'] = filt
     hdulist.flush()
 
     return n_frames
@@ -291,12 +304,14 @@ if __name__ == '__main__':
                         nargs=2)
     parser.add_argument('-method',
                         help='combination method',
-                        choices=['average', 'median', 'clipped'],
+                        choices=['average', 'median', 'clipped', 'sum'],
                         default='clipped')
     parser.add_argument("-backsub", action="store_true",
                         help='subtract background in each frame ')
     parser.add_argument("-keep_files", action="store_true",
                         help='keep intermediate files', default=False)
+    parser.add_argument("-select", help='select every nth file',
+                        type=int, default=0)
     parser.add_argument('images', help='images to process', nargs='+')
 
     args = parser.parse_args()
@@ -306,7 +321,11 @@ if __name__ == '__main__':
     combine_method = args.method
     backsub = args.backsub
     keep_files = args.keep_files
+    select = args.select
     filenames = args.images
+
+    if select != 0:
+        filenames = filenames[::select]
 
     # read telescope and filter information from fits headers
     # check that they are the same for all images

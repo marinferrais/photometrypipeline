@@ -3255,6 +3255,518 @@ loneos_param = {
 }
 
 
+trappist_sud_param = {
+    'telescope_instrument' : 'Trappist-S', # telescope/instrument name
+    'telescope_keyword'    : 'TRAPPIST',  # telescope/instrument keyword
+    'observatory_code'     : 'I40',         # MPC observatory code
+    'secpix'               : (0.64, 0.64 ), # pixel size (arcsec)
+                                            # before binning
+    'ext_coeff'            : 0.05,          # typical extinction coefficient
+
+
+    # image orientation preferences
+    'flipx'                : True,
+    'flipy'                : False,
+    'rotate'               : 0,
+
+    # instrument-specific FITS header keywords
+    'binning'              : ('XBINNING', 'YBINNING'),
+                           # binning in x/y, '_blankN' denotes that both axes
+                           # are listed in one keyword, sep. by blanks
+    'extent'               : ('NAXIS1', 'NAXIS2'),   # N_pixels in x/y
+    'ra'                   : 'RA',  # telescope pointing, RA
+    'dec'                  : 'DEC', # telescope pointin, Dec
+    'radec_separator'      : ' ',   # RA/Dec hms separator, use 'XXX'
+                                    # if already in degrees
+    'date_keyword'         : 'DATE-OBS', # obs date/time
+                                         # keyword; use
+                                         # 'date|time' if
+                                         # separate
+    'obsmidtime_jd'        : 'JD', # obs midtime jd keyword
+                                         # (usually provided by
+                                         # pp_prepare
+    'object'               : 'OBJECT',  # object name keyword
+    'filter'               : 'FILTER',  # filter keyword
+    'filter_translations'  : {'V': 'V', 'R': 'R', 'Rc': 'R', 'B': 'B', 'VR': None,
+                              'I': 'I', 'Ic': 'I', 'SDSSup' : 'u', 'SDSSgp' : 'g',
+                              'SDSSrp' : 'r', 'SDSSip' : 'i',
+                              'SDSSzp' : 'z', 'OH': None, 'CN': None,
+                              'UC': None, 'NH': None, 'BC': None,
+                              'C2': None, 'C3': None, 'CO+': None,
+                              'H2O+': None, 'GC': None, 'RC': None, 'exoBB': None,
+                              'Exo': None, 'I+z': None, 'Clear': None, 'z': 'z'},
+                             # filtername translation dictionary
+    'exptime'              : 'EXPTIME', # exposure time keyword (s)
+    'airmass'              : 'AIRMASS', # airmass keyword
+
+
+    # source extractor settings
+    'source_minarea'       : 9, # default sextractor source minimum N_pixels
+    'source_snr': 3, # default sextractor source snr for registration
+    'aprad_default'        : 4, # default aperture radius in px
+    'aprad_range'          : [2, 13], # [minimum, maximum] aperture radius (px)
+    'sex-config-file'      : rootpath+'/setup/trappist_S.sex',
+    'mask_file'            : {},
+    #                        mask files as a function of x,y binning
+
+    # registration settings (Scamp)
+    'scamp-config-file'    : rootpath+'/setup/trappist_S.scamp',
+    'reg_max_mag'          : 16,
+    'reg_search_radius'    : 0.2, # deg
+    'source_tolerance': 'high',
+
+    # swarp settings
+    'copy_keywords'        : ('OBSERVAT,INSTRUME,EXPTIME,OBJECT,' +
+                              'DATE-OBS,RA,DEC,AIRMASS,TEL_KEYW,BINX,BINY,' +
+                              'FILTERS,MJD-MOBS'),
+    #                        keywords to be copied in image
+    #                        combination using swarp
+    'swarp-config-file'    : rootpath+'/setup/trappist_S.swarp',
+
+    # default catalog settings
+    'astrometry_catalogs'  : ['GAIA'],
+    #'astrometry_catalogs'  : ['GAIA', 'TGAS', 'USNO-B1.0', '2MASS'],
+    'photometry_catalogs'  : ['PANSTARRS', 'SDSS-R9', 'APASS9']
+}
+
+trappist_sud_ESO_param = {
+    'telescope_instrument' : 'Trappist-S', # telescope/instrument name
+    'telescope_keyword'    : 'TRAPPIST-S',  # telescope/instrument keyword
+    'observatory_code'     : 'I40',         # MPC observatory code
+    'secpix'               : (0.64, 0.64 ), # pixel size (arcsec)
+                                            # before binning
+    'ext_coeff'            : 0.05,          # typical extinction coefficient
+
+
+    # image orientation preferences
+    'flipx'                : True,
+    'flipy'                : False,
+    'rotate'               : 0,
+
+    # instrument-specific FITS header keywords
+    'binning'              : ('XBINNING', 'YBINNING'),
+                           # binning in x/y, '_blankN' denotes that both axes
+                           # are listed in one keyword, sep. by blanks
+    'extent'               : ('NAXIS1', 'NAXIS2'),   # N_pixels in x/y
+    'ra'                   : 'RA',  # telescope pointing, RA
+    'dec'                  : 'DEC', # telescope pointin, Dec
+    'radec_separator'      : 'XXX',   # RA/Dec hms separator, use 'XXX'
+                                    # if already in degrees
+    'date_keyword'         : 'DATE-OBS', # obs date/time
+                                         # keyword; use
+                                         # 'date|time' if
+                                         # separate
+    'obsmidtime_jd'        : 'JD', # obs midtime jd keyword
+                                         # (usually provided by
+                                         # pp_prepare
+    'object'               : 'OBJECT',  # object name keyword
+    'filter'               : 'FILTER',  # filter keyword
+    'filter_translations'  : {'V': 'V', 'R': 'R', 'Rc': 'R', 'B': 'B', 'VR': None,
+                              'I': 'I', 'Ic': 'I', 'SDSSup' : 'u', 'SDSSgp' : 'g',
+                              'SDSSrp' : 'r', 'SDSSip' : 'i',
+                              'SDSSzp' : 'z', 'OH': None, 'CN': None,
+                              'UC': None, 'NH': None, 'BC': None,
+                              'C2': None, 'C3': None, 'CO+': None,
+                              'H2O+': None, 'GC': None, 'RC': None, 'exoBB': None,
+                              'Exo': None, 'I+z': None, 'Clear': None},
+                             # filtername translation dictionary
+    'exptime'              : 'EXPTIME', # exposure time keyword (s)
+    'airmass'              : 'AIRMASS', # airmass keyword
+
+
+    # source extractor settings
+    'source_minarea'       : 9, # default sextractor source minimum N_pixels
+    'source_snr': 3, # default sextractor source snr for registration
+    'aprad_default'        : 4, # default aperture radius in px
+    'aprad_range'          : [2, 13], # [minimum, maximum] aperture radius (px)
+    'sex-config-file'      : rootpath+'/setup/trappist_S.sex',
+    'mask_file'            : {},
+    #                        mask files as a function of x,y binning
+
+    # registration settings (Scamp)
+    'scamp-config-file'    : rootpath+'/setup/trappist_S.scamp',
+    'reg_max_mag'          : 16,
+    'reg_search_radius'    : 0.2, # deg
+    'source_tolerance': 'high',
+
+    # swarp settings
+    'copy_keywords'        : ('OBSERVAT,INSTRUME,EXPTIME,OBJECT,' +
+                              'DATE-OBS,RA,DEC,AIRMASS,TEL_KEYW,BINX,BINY,' +
+                              'FILTERS,MJD-MOBS'),
+    #                        keywords to be copied in image
+    #                        combination using swarp
+    'swarp-config-file'    : rootpath+'/setup/trappist_S.swarp',
+
+    # default catalog settings
+    'astrometry_catalogs'  : ['GAIA'],
+    'photometry_catalogs'  : ['PANSTARRS', 'SDSS-R9', 'APASS9']
+}
+
+
+trappist_nord_param = {
+    'telescope_instrument' : 'Trappist', # telescope/instrument name
+    'telescope_keyword'    : 'ACP->NTM',  # telescope/instrument keyword
+    'observatory_code'     : 'Z53',         # MPC observatory code
+    'secpix'               : (0.60, 0.60 ), # pixel size (arcsec)
+                                            # before binning
+    'ext_coeff'            : 0.05,          # typical extinction coefficient
+
+
+    # image orientation preferences
+    'flipx'                : True,
+    'flipy'                : False,
+    'rotate'               : 0,
+
+    # instrument-specific FITS header keywords
+    'binning'              : ('XBINNING', 'YBINNING'),
+                           # binning in x/y, '_blankN' denotes that both axes
+                           # are listed in one keyword, sep. by blanks
+    'extent'               : ('NAXIS1', 'NAXIS2'),   # N_pixels in x/y
+    'ra'                   : 'RA',  # telescope pointing, RA
+    'dec'                  : 'DEC', # telescope pointin, Dec
+    'radec_separator'      : ' ',   # RA/Dec hms separator, use 'XXX'
+                                    # if already in degrees
+    'date_keyword'         : 'DATE-OBS', # obs date/time
+                                         # keyword; use
+                                         # 'date|time' if
+                                         # separate
+    'obsmidtime_jd'        : 'JD', # obs midtime jd keyword
+                                         # (usually provided by
+                                         # pp_prepare
+    'object'               : 'OBJECT',  # object name keyword
+    'filter'               : 'FILTER',  # filter keyword
+    'filter_translations'  : {'V': 'V', 'R': 'R', 'Rc': 'R', 'B': 'B', 'VR': None,
+                              'I': 'I', 'Ic': 'I', 'SDSSup' : 'u', 'SDSSgp' : 'g',
+                              'SDSSrp' : 'r', 'SDSSip' : 'i',
+                              'SDSSzp' : 'z', 'OH': None, 'CN': None,
+                              'UC': None, 'NH': None, 'BC': None,
+                              'C2': None, 'C3': None, 'CO+': None,
+                              'H2O+': None, 'GC': None, 'RC': None, 'exoBB': None,
+                              'Exo': None, 'I+z': None,'Clear': None},
+                             # filtername translation dictionary
+    'exptime'              : 'EXPTIME', # exposure time keyword (s)
+    'airmass'              : 'AIRMASS', # airmass keyword
+
+
+    # source extractor settings
+    'source_minarea'       : 9, # default sextractor source minimum N_pixels
+    'source_snr': 3, # default sextractor source snr for registration
+    'aprad_default'        : 4, # default aperture radius in px
+    'aprad_range'          : [2, 13], # [minimum, maximum] aperture radius (px)
+    'sex-config-file'      : rootpath+'/setup/trappist_N.sex',
+    'mask_file'            : {},
+    #                        mask files as a function of x,y binning
+
+    # registration settings (Scamp)
+    'scamp-config-file'    : rootpath+'/setup/trappist_N.scamp',
+    'reg_max_mag'          : 16,
+    'reg_search_radius'    : 0.2, # deg
+    'source_tolerance': 'high',
+
+    # swarp settings
+    'copy_keywords'        : ('OBSERVAT,INSTRUME,EXPTIME,OBJECT,' +
+                              'DATE-OBS,RA,DEC,AIRMASS,TEL_KEYW,BINX,BINY,' +
+                              'FILTERS,MJD-MOBS'),
+    #                        keywords to be copied in image
+    #                        combination using swarp
+    'swarp-config-file'    : rootpath+'/setup/trappist_N.swarp',
+
+    # default catalog settings
+    'astrometry_catalogs'  : ['GAIA'],
+    'photometry_catalogs'  : ['PANSTARRS', 'SDSS-R9', 'APASS9']
+}
+
+
+specu_europa_param = {
+    'telescope_instrument' : 'SPECULOOS2', # telescope/instrument name
+    'telescope_keyword'    : 'SPECULOOS-EUROPA',  # telescope/instrument keyword
+    #'observatory_code'     : 'W75',         # MPC observatory code
+    'observatory_code'     : '309',         # MPC observatory code
+    'secpix'               : (0.35, 0.35 ), # pixel size (arcsec)
+                                            # before binning
+    'ext_coeff'            : 0.05,          # typical extinction coefficient
+
+
+    # image orientation preferences
+    'flipx'                : True,
+    'flipy'                : False,
+    'rotate'               : 0,
+
+    # instrument-specific FITS header keywords
+    'binning'              : ('XBINNING', 'YBINNING'),
+                           # binning in x/y, '_blankN' denotes that both axes
+                           # are listed in one keyword, sep. by blanks
+    'extent'               : ('NAXIS1', 'NAXIS2'),   # N_pixels in x/y
+    'ra'                   : 'RA',  # telescope pointing, RA
+    'dec'                  : 'DEC', # telescope pointin, Dec
+    'radec_separator'      : 'XXX',   # RA/Dec hms separator, use 'XXX'
+                                    # if already in degrees
+    'date_keyword'         : 'DATE-OBS', # obs date/time
+                                         # keyword; use
+                                         # 'date|time' if
+                                         # separate
+    'obsmidtime_jd'        : 'JD', # obs midtime jd keyword
+                                         # (usually provided by
+                                         # pp_prepare
+    'object'               : 'OBJECT',  # object name keyword
+    'filter'               : 'FILTER',  # filter keyword
+    'filter_translations'  : {'V': 'V', 'R': 'R', 'Rc': 'R', 'B': 'B', 'VR': None,
+                              'I': 'I', 'Ic': 'I', 'SDSSup' : 'u', 'SDSSgp' : 'g',
+                              'SDSSrp' : 'r', 'SDSSip' : 'i',
+                              'SDSSzp' : 'z', 'OH': None, 'CN': None,
+                              'UC': None, 'NH': None, 'BC': None,
+                              'C2': None, 'C3': None, 'CO+': None,
+                              'H2O+': None, 'GC': None, 'RC': None, 'exoBB': None,
+                              'I+z': None,'Clear': None},
+                             # filtername translation dictionary
+    'exptime'              : 'EXPTIME', # exposure time keyword (s)
+    'airmass'              : 'AIRMASS', # airmass keyword
+
+
+    # source extractor settings
+    'source_minarea'       : 9, # default sextractor source minimum N_pixels
+    'source_snr': 3, # default sextractor source snr for registration
+    'aprad_default'        : 4, # default aperture radius in px
+    'aprad_range'          : [2, 13], # [minimum, maximum] aperture radius (px)
+    'sex-config-file'      : rootpath+'/setup/specu2.sex',
+    'mask_file'            : {},
+    #                        mask files as a function of x,y binning
+
+    # registration settings (Scamp)
+    'scamp-config-file'    : rootpath+'/setup/specu2.scamp',
+    'reg_max_mag'          : 16,
+    'reg_search_radius'    : 0.2, # deg
+    'source_tolerance': 'high',
+
+    # swarp settings
+    'copy_keywords'        : ('OBSERVAT,INSTRUME,EXPTIME,OBJECT,' +
+                              'DATE-OBS,RA,DEC,AIRMASS,TEL_KEYW,BINX,BINY,' +
+                              'FILTERS,MJD-MOBS'),
+    #                        keywords to be copied in image
+    #                        combination using swarp
+    'swarp-config-file'    : rootpath+'/setup/specu2.swarp',
+
+    # default catalog settings
+    'astrometry_catalogs'  : ['GAIA'],
+    'photometry_catalogs'  : ['SDSS-R9', 'PANSTARRS', 'APASS9']
+}
+
+
+SNO_Artemis_param = {
+    'telescope_instrument' : 'SNO_Artemis', # telescope/instrument name
+    'telescope_keyword'    : 'ACP->Artemis',  # telescope/instrument keyword
+    'observatory_code'     : '954',         # MPC observatory code
+    'secpix'               : (0.35, 0.35), # pixel size (arcsec)
+                                            # before binning
+    'ext_coeff'            : 0.05,          # typical extinction coefficient
+
+
+    # image orientation preferences
+    'flipx'                : True,
+    'flipy'                : False,
+    'rotate'               : 0,
+
+    # instrument-specific FITS header keywords
+    'binning'              : ('XBINNING', 'YBINNING'),
+                           # binning in x/y, '_blankN' denotes that both axes
+                           # are listed in one keyword, sep. by blanks
+    'extent'               : ('NAXIS1', 'NAXIS2'),   # N_pixels in x/y
+    'ra'                   : 'RA',  # telescope pointing, RA
+    'dec'                  : 'DEC', # telescope pointin, Dec
+    'radec_separator'      : ' ',   # RA/Dec hms separator, use 'XXX'
+                                    # if already in degrees
+    'date_keyword'         : 'DATE-OBS', # obs date/time
+                                         # keyword; use
+                                         # 'date|time' if
+                                         # separate
+    'obsmidtime_jd'        : 'JD', # obs midtime jd keyword
+                                         # (usually provided by
+                                         # pp_prepare
+    'object'               : 'OBJECT',  # object name keyword
+    'filter'               : 'FILTER',  # filter keyword
+    'filter_translations'  : {'V': 'V', 'R': 'R', 'Rc': 'R', 'B': 'B', 'VR': None,
+                              'I': 'I', 'Ic': 'I', 'SDSSup' : 'u', 'SDSSgp' : 'g',
+                              'SDSSrp' : 'r', 'SDSSip' : 'i',
+                              'SDSSzp' : 'z', 'OH': None, 'CN': None,
+                              'UC': None, 'NH': None, 'BC': None,
+                              'C2': None, 'C3': None, 'CO+': None,
+                              'H2O+': None, 'GC': None, 'RC': None, 'exoBB': None,
+                              'Exo': None,'I+z': None,'Clear': None,'zcut': None},
+                             # filtername translation dictionary
+    'exptime'              : 'EXPTIME', # exposure time keyword (s)
+    'airmass'              : 'AIRMASS', # airmass keyword
+
+
+    # source extractor settings
+    'source_minarea'       : 9, # default sextractor source minimum N_pixels
+    'source_snr': 3, # default sextractor source snr for registration
+    'aprad_default'        : 4, # default aperture radius in px
+    'aprad_range'          : [2, 13], # [minimum, maximum] aperture radius (px)
+    'sex-config-file'      : rootpath+'/setup/trappist_N.sex',
+    'mask_file'            : {},
+    #                        mask files as a function of x,y binning
+
+    # registration settings (Scamp)
+    'scamp-config-file'    : rootpath+'/setup/trappist_N.scamp',
+    'reg_max_mag'          : 16,
+    'reg_search_radius'    : 0.2, # deg
+    'source_tolerance': 'high',
+
+    # swarp settings
+    'copy_keywords'        : ('OBSERVAT,INSTRUME,EXPTIME,OBJECT,' +
+                              'DATE-OBS,RA,DEC,AIRMASS,TEL_KEYW,BINX,BINY,' +
+                              'FILTERS,MJD-MOBS'),
+    #                        keywords to be copied in image
+    #                        combination using swarp
+    'swarp-config-file'    : rootpath+'/setup/trappist_N.swarp',
+
+    # default catalog settings
+    'astrometry_catalogs'  : ['GAIA'],
+    'photometry_catalogs'  : ['SDSS-R9', 'PANSTARRS', 'APASS9']
+}
+
+C2PU_omicron_param = {
+    'telescope_instrument' : 'C2PU/Omicron', # telescope/instrument name
+    'telescope_keyword'    : 'C2PU/Omicron',  # telescope/instrument keyword
+    'observatory_code'     : '010',         # MPC observatory code
+    'secpix'               : (0.235, 0.235), # pixel size (arcsec)
+                                            # before binning
+    'ext_coeff'            : 0.05,          # typical extinction coefficient
+
+
+    # image orientation preferences
+    'flipx'                : False,
+    'flipy'                : True,
+    'rotate'               : 0,
+
+    # instrument-specific FITS header keywords
+    'binning'              : ('BINX', 'BINY'),
+                           # binning in x/y, '_blankN' denotes that both axes
+                           # are listed in one keyword, sep. by blanks
+    'extent'               : ('NAXIS1', 'NAXIS2'),   # N_pixels in x/y
+    'ra'                   : 'RA_D',  # telescope pointing, RA
+    'dec'                  : 'DEC_D', # telescope pointin, Dec
+    'radec_separator'      : 'XXX',   # RA/Dec hms separator, use 'XXX'
+                                    # if already in degrees
+    'date_keyword'         : 'DATE-OBS', # obs date/time
+                                         # keyword; use
+                                         # 'date|time' if
+                                         # separate
+    'obsmidtime_jd'        : 'JD', # obs midtime jd keyword
+                                         # (usually provided by
+                                         # pp_prepare
+    'object'               : 'OBJECT',  # object name keyword
+    'filter'               : 'INSTFILT',  # filter keyword
+    'filter_translations'  : {'V': 'V', 'R': 'R', 'Rc': 'R', 'B': 'B', 'VR': None,
+                              'I': 'I', 'Ic': 'I', 'SDSSup' : 'u', 'SDSSgp' : 'g',
+                              'SDSSrp' : 'r','SDSSrp+' : 'r', 'SDSSip' : 'i',
+                              'SDSSzp' : 'z', 'OH': None, 'CN': None,
+                              'UC': None, 'NH': None, 'BC': None,
+                              'C2': None, 'C3': None, 'CO+': None,
+                              'H2O+': None, 'GC': None, 'RC': None, 'exoBB': None,
+                              'Exo': None,'I+z': None,'Clear': None,'zcut': None},
+                             # filtername translation dictionary
+    'exptime'              : 'EXPTIME', # exposure time keyword (s)
+    'airmass'              : 'AIRMASS', # airmass keyword
+
+
+    # source extractor settings
+    'source_minarea'       : 9, # default sextractor source minimum N_pixels
+    'source_snr': 3, # default sextractor source snr for registration
+    'aprad_default'        : 4, # default aperture radius in px
+    'aprad_range'          : [3, 13], # [minimum, maximum] aperture radius (px)
+    'sex-config-file'      : rootpath+'/setup/trappist_N.sex',
+    'mask_file'            : {},
+    #                        mask files as a function of x,y binning
+
+    # registration settings (Scamp)
+    'scamp-config-file'    : rootpath+'/setup/trappist_N.scamp',
+    'reg_max_mag'          : 16,
+    'reg_search_radius'    : 0.4, # deg
+    'source_tolerance': 'high',
+
+    # swarp settings
+    'copy_keywords'        : ('OBSERVAT,INSTRUME,EXPTIME,OBJECT,' +
+                              'DATE-OBS,RA,DEC,AIRMASS,TEL_KEYW,BINX,BINY,' +
+                              'FILTERS,MJD-MOBS'),
+    #                        keywords to be copied in image
+    #                        combination using swarp
+    'swarp-config-file'    : rootpath+'/setup/trappist_N.swarp',
+
+    # default catalog settings
+    'astrometry_catalogs'  : ['GAIA'],
+    'photometry_catalogs'  : ['SDSS-R9', 'PANSTARRS', 'APASS9']
+}
+
+
+
+NTT_EFOSC_param = {
+    'telescope_instrument' : 'EFOSC', # telescope/instrument name
+    'telescope_keyword'    : 'ESO-NTT',  # telescope/instrument keyword
+    'observatory_code'     : '809',         # MPC observatory code
+    'secpix'               : (0.12, 0.12), # pixel size (arcsec)
+                                            # before binning
+    'ext_coeff'            : 0.05,          # typical extinction coefficient
+
+
+    # image orientation preferences
+    'flipx'                : False,
+    'flipy'                : False,
+    'rotate'               : 0,
+
+    # instrument-specific FITS header keywords
+    'binning'              : ('XBINNING', 'YBINNING'),
+                           # binning in x/y, '_blankN' denotes that both axes
+                           # are listed in one keyword, sep. by blanks
+    'extent'               : ('NAXIS1', 'NAXIS2'),   # N_pixels in x/y
+    'ra'                   : 'RA',  # telescope pointing, RA
+    'dec'                  : 'DEC', # telescope pointin, Dec
+    'radec_separator'      : ' ',   # RA/Dec hms separator, use 'XXX'
+                                    # if already in degrees
+    'date_keyword'         : 'DATE-OBS', # obs date/time
+                                         # keyword; use
+                                         # 'date|time' if
+                                         # separate
+    'obsmidtime_jd'        : 'MJD_OBS', # obs midtime jd keyword
+                                         # (usually provided by
+                                         # pp_prepare
+    'object'               : 'OBJECT',  # object name keyword
+    'filter'               : 'HIERARCH ESO INS FILT1 NAME',  # filter keyword
+    'filter_translations'  : {'r#784' : 'R'},
+                             # filtername translation dictionary
+    'exptime'              : 'EXPTIME', # exposure time keyword (s)
+    'airmass'              : 'HIERARCH ESO TEL AIRM END', # airmass keyword
+
+
+    # source extractor settings
+    'source_minarea'       : 9, # default sextractor source minimum N_pixels
+    'source_snr': 3, # default sextractor source snr for registration
+    'aprad_default'        : 4, # default aperture radius in px
+    'aprad_range'          : [2, 13], # [minimum, maximum] aperture radius (px)
+    'sex-config-file'      : rootpath+'/setup/trappist_N.sex',
+    'mask_file'            : {},
+    #                        mask files as a function of x,y binning
+
+    # registration settings (Scamp)
+    'scamp-config-file'    : rootpath+'/setup/trappist_N.scamp',
+    'reg_max_mag'          : 16,
+    'reg_search_radius'    : 0.2, # deg
+    'source_tolerance': 'high',
+
+    # swarp settings
+    'copy_keywords'        : ('OBSERVAT,INSTRUME,EXPTIME,OBJECT,' +
+                              'DATE-OBS,RA,DEC,AIRMASS,TEL_KEYW,BINX,BINY,' +
+                              'FILTERS,MJD-MOBS'),
+    #                        keywords to be copied in image
+    #                        combination using swarp
+    'swarp-config-file'    : rootpath+'/setup/trappist_N.swarp',
+
+    # default catalog settings
+    'astrometry_catalogs'  : ['GAIA'],
+    'photometry_catalogs'  : ['SDSS-R9', 'PANSTARRS', 'APASS9']
+}
+
+
 janus_sud_param = {
     'telescope_instrument' : 'Janus Sud', # telescope/instrument name
     'telescope_keyword'    : 'ZWO ASI1600MM-Cool',  # telescope/instrument keyword
@@ -3345,11 +3857,21 @@ implemented_telescopes = ['VATT4K', 'DCTLMI', 'ARC35ARCTIC',
                           'LCOSBIGKB78', 'ARC35SPICAM', 'LCOSINFL03',
                           'LCOSINFL16', 'LCOSINFL11', 'LCOSINFA15',
                           'LCOSPECFS01', 'P60OPT', 'P60SEDM', 'GMOSN',
-                          'DFOSC', 'LONEOS']
+                          'DFOSC', 'LONEOS','TRAPPIST-South','TRAPPIST-North',
+                          'NTT_EFOSC','SPECULOOS_Europa','SNO_Artemis',
+                          'C2PU/Omicron']
 
 # translate INSTRUME (or others, see _pp_conf.py) header keyword into
 # PP telescope keyword
 instrument_identifiers = {'= "Vatt4k"':        'VATT4K',
+                          'EFOSC':             'ESO-NTT',
+                          'FLI-New':           'TRAPPIST',
+                          'TRAPPISTS':           'TRAPPIST-S',
+                          'Andor Tech':        'ACP->NTM',
+                          #'Andor Tech':        'ACP->Artemis',
+                          'Omicron Prime Focus (OPF)':        'C2PU/Omicron',
+                          'CCD-23156':        'Artemis',
+                          'SPECULOOS2':        'SPECULOOS-EUROPA',
                           'LMI':               'DCTLMI',
                           'arctic':            'ARC35ARCTIC',
                           'agile':             'ARC35AGILE',
@@ -3406,7 +3928,15 @@ instrument_identifiers = {'= "Vatt4k"':        'VATT4K',
                           'loneos': 'LONEOS', }
 
 # translate telescope keyword into parameter set defined here
-telescope_parameters = {'VATT4K':        vatt4k_param,
+telescope_parameters = {'TRAPPIST':      trappist_sud_param,
+                        'TRAPPIST-S':    trappist_sud_ESO_param,
+                        'ACP->NTM':      trappist_nord_param,
+                        'SPECULOOS-EUROPA':    specu_europa_param,
+                        'ACP->Artemis':  SNO_Artemis_param,
+                        'Artemis':  SNO_Artemis_param,
+                        'C2PU/Omicron':  C2PU_omicron_param,
+                        'ESO-NTT':       NTT_EFOSC_param,
+                        'VATT4K':        vatt4k_param,
                         'DCTLMI':        dctlmi_param,
                         'ARC35ARCTIC':   arc35arctic_param,
                         'ARC35AGILE':    arc35agile_param,

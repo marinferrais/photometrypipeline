@@ -261,7 +261,7 @@ def run_the_pipeline(filenames, man_targetname, man_filtername,
     # a fixed aperture radius has been used
     else:
         if _pp_conf.photmode == 'APER':
-            summary_message += "using a fixed aperture radius of %.1f px;" % aprad
+            summary_message = "using a fixed aperture radius of %.1f px;" % aprad
 
     # add information to summary website, if requested
     if _pp_conf.use_diagnostics_summary:
@@ -343,6 +343,78 @@ def run_the_pipeline(filenames, man_targetname, man_filtername,
     gc.collect()  # collect garbage; just in case, you never know...
 
 
+def save_phot(root, target=None, photerr=False):
+    from glob import glob
+    # save results as epochJD, mag , mag err
+    night = root.split('/')[-1]
+    night = night.replace('ACP->NTM', 'TN')
+    night = night.replace('exoBB', 'Exo')
+    #night = night.replace('-', '')
+    mdate=False
+    if mdate:
+        date = night.split('_')[-2].split('-').merge()
+    if not target:
+        target = night.split('_')[0].lstrip('0')
+    try:
+        print(f'> Try reading photometry from : photometry_{target}*.dat') 
+        phot_file = glob(f'photometry_{target}*.dat')[0]
+    except IndexError:
+        try:
+            print(f'> Try reading photometry from : photometry__{target}*.dat') 
+            phot_file = glob(f'photometry__{target}*.dat')[0]
+        except IndexError:
+            targetname2 = f'{target[:4]}_{target[4:]}'
+            print(f'> Try reading photometry from : photometry_*_{targetname2}*.dat') 
+            phot_file = glob(f'photometry_*_{targetname2}*.dat')[0]
+    phot_res = np.genfromtxt(phot_file)
+    if len(phot_res.shape) == 1:
+        phot_res = np.reshape(phot_res, (1, -1))
+    ofile = night+'.dat'
+    print(f'> Saving mag file to {ofile}')
+    if photerr: # extracting the photometric errors
+        data = np.hstack((phot_res[:, 1:3], phot_res[:, 14:15]))
+        np.savetxt(ofile, data, fmt=['%.7f','%.4f','%.4f'])
+    else: # extracting the magnitude calibration errors
+        np.savetxt(ofile, phot_res[:, 1:4], fmt=['%.7f','%.4f','%.4f'])
+"""
+def save_phot(root, target=None):
+    from glob import glob
+    from parse_name import parse_name
+    # save results as epochJD, mag , mag err
+    night = root.split('/')[-1]
+    night = night.replace('ACP->NTM', 'TN')
+    night = night.replace('exoBB', 'Exo')
+    #night = night.replace('-', '')
+    mdate=False
+    if mdate:
+        date = night.split('_')[-2].split('-').merge()
+    if not target:
+        target = night.split('_')[0].lstrip('0')
+        targetnames = parse_name(target)[0]
+        if targetnames['number'] != '':
+            target = str(targetnames['number'])
+        else:
+            target = targetnames['desig']
+    try:
+        print(f'> Try reading photometry from : photometry_{target}*.dat') 
+        phot_file = glob(f'photometry_{target}*.dat')[0]
+    except IndexError:
+        try:
+            print(f'> Try reading photometry from : photometry__{target}*.dat') 
+            phot_file = glob(f'photometry__{target}*.dat')[0]
+        except IndexError:
+            targetname2 = f'{target[:4]}_{target[4:]}'
+            print(f'> Try reading photometry from : photometry_*_{targetname2}*.dat') 
+            phot_file = glob(f'photometry_*_{targetname2}*.dat')[0]
+    phot_res = np.genfromtxt(phot_file)
+    if len(phot_res.shape) == 1:
+        phot_res = np.reshape(phot_res, (1, -1))
+    ofile = night+'.dat'
+    print(f'> Saving mag file to {ofile}')
+    np.savetxt(ofile, phot_res[:, 1:4], fmt=['%.7f','%.4f','%.4f'])
+"""
+
+
 if __name__ == '__main__':
 
     # command line arguments
@@ -398,8 +470,8 @@ if __name__ == '__main__':
     if len(filenames) == 1 and filenames[0] == 'all':
 
         # dump data set information into summary file
-        _pp_conf.use_diagnostics_summary = True
-        diag.create_summary()
+        #_pp_conf.use_diagnostics_summary = True
+        #diag.create_summary()
 
         # turn prefix and fits suffixes into regular expression
         if prefix is None:
@@ -414,16 +486,24 @@ if __name__ == '__main__':
                 continue
 
             # identify data frames
-            filenames = sorted([s for s in files if re.match(regex, s)])
+            filenames = sorted([s for s in files if re.match(regex, s)]) # marche pas ?
+
+            filenames = sorted([s for s in files if s[-5:] == '.fits'])
+
 
             # call run_the_pipeline for each directory separately
             if len(filenames) > 0:
                 print('\n RUN PIPELINE IN %s' % root)
+                
                 os.chdir(root)
 
                 run_the_pipeline(filenames, man_targetname, man_filtername,
                                  fixed_aprad, source_tolerance, solar,
-                                 rerun_registration, asteroids)
+                                 rerun_registration, asteroids, keep_wcs)
+
+                # save phot results to file [marin - feb 21]
+                #save_phot(root, target=man_targetname)
+                
                 os.chdir(_masterroot_directory)
             else:
                 print('\n NOTHING TO DO IN %s' % root)
@@ -433,4 +513,6 @@ if __name__ == '__main__':
         run_the_pipeline(filenames, man_targetname, man_filtername,
                          fixed_aprad, source_tolerance, solar,
                          rerun_registration, asteroids, keep_wcs)
+        # save phot results to file [marin - feb 21]
+        #save_phot(os.getcwd(), target=man_targetname)
         pass
