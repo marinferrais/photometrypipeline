@@ -799,6 +799,7 @@ def save_phot(root, target=None, photerr=False, maxflag=3):
     # OBS table
     name_dict = {'ACP->NTM':'Z53',
                  'TRAPPIST':'I40',
+                 'TRAPPIST-S':'I40',
                  'Artemis':'Z25',
                  'ACP->Artemis':'Z25',
                  'Spacewatch-0.9m':'691',
