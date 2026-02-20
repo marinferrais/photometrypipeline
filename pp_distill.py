@@ -32,7 +32,7 @@ from astroquery.jplhorizons import Horizons
 from astropy.io import ascii
 from astropy.table import Table
 
-from parse_name import parse_name
+import rocks
 
 try:
     from astroquery.vizier import Vizier
@@ -192,11 +192,7 @@ def moving_primary_target(catalogs, man_targetname, offset, is_asteroid=None,
         if man_targetname is not None:
             targetname = man_targetname.replace('_', ' ')
         else:
-            targetnames = parse_name(targetname)[0]
-            if targetnames['number'] != '':
-                targetname = str(targetnames['number'])
-            else:
-                targetname = targetnames['desig']
+            targetname = rocks.id(targetname)[0]
         cat.obj = targetname
         for smallbody in [True, False]:
             #obj = Horizons(targetname,
@@ -236,7 +232,7 @@ def moving_primary_target(catalogs, man_targetname, offset, is_asteroid=None,
             targetname = man_targetname.replace('_', ' ')
             cat.obj = targetname
         else:
-            targetname = parse_name(targetname)[1]
+            targetname = rocks.id(targetname)[0]
             cat.obj = targetname
         obj = Horizons(targetname.replace('_', ' '),
                        id_type={True: 'smallbody',
@@ -750,7 +746,8 @@ def distill(catalogs, man_targetname, offset, fixed_targets_file, posfile,
             print('extracting thumbnail images')
         logging.info(' ~~~~~~~~~ creating diagnostic output')
         diag.add_results(output)
-    save_phot(os.getcwd(), target=man_targetname, maxflag=maxflag)
+    targetname =  next(iter(targetnames)).translate(_pp_conf.target2filename)
+    save_phot(os.getcwd(), target=targetname, maxflag=maxflag)
 
     return output
 

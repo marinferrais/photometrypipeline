@@ -745,12 +745,74 @@ spacewatch_09m_param = {
 
     # default catalog settings
     'astrometry_catalogs'  : ['GAIA'],
-    #'photometry_catalogs'  : ['SDSS-R13', 'PANSTARRS', 'APASS9']
-    #'photometry_catalogs'  : ['SDSS-R9', 'PANSTARRS', 'APASS9']
     'photometry_catalogs'  : ['PANSTARRS', 'SDSS-R9', 'APASS9']
-    #'photometry_catalogs'  : ['APASS9', 'PANSTARRS', 'SDSS-R9']
 }
 
+robinson_param = {
+    'telescope_instrument' : 'ZWO ASI2600MM Pro', # telescope/instrument name
+    'telescope_keyword'    : 'Robinson Mono',  # telescope/instrument keyword
+    'observatory_code'     : 'W39',         # MPC observatory code
+    'secpix'               : (0.186, 0.186), # pixel size (arcsec)
+                                            # before binning
+    'ext_coeff'            : 0.05,          # typical extinction coefficient
+
+
+    # image orientation preferences
+    'flipx'                : True,
+    'flipy'                : False,
+    'rotate'               : 0,
+
+    # instrument-specific FITS header keywords
+    'binning'              : ('XBINNING', 'YBINNING'),
+                           # binning in x/y, '_blankN' denotes that both axes
+                           # are listed in one keyword, sep. by blanks
+    'extent'               : ('NAXIS1', 'NAXIS2'),   # N_pixels in x/y
+    'ra'                   : 'RA',  # telescope pointing, RA
+    'dec'                  : 'DEC', # telescope pointin, Dec
+    'radec_separator'      : 'XXX',   # RA/Dec hms separator, use 'XXX'
+                                    # if already in degrees
+    'date_keyword'         : 'DATE-OBS', # obs date/time
+                                         # keyword; use
+                                         # 'date|time' if
+                                         # separate
+    'obsmidtime_jd'        : 'JD', # obs midtime jd keyword
+                                         # (usually provided by
+                                         # pp_prepare
+    'object'               : 'OBJECT',  # object name keyword
+    'filter'               : 'FILTER',  # filter keyword
+    'filter_translations'  : {'Luminance': None},
+                             # filtername translation dictionary
+    'exptime'              : 'EXPTIME', # exposure time keyword (s)
+    'airmass'              : 'AIRMASS', # airmass keyword
+
+
+    # source extractor settings
+    'source_minarea'       : 9, # default sextractor source minimum N_pixels
+    'source_snr': 3, # default sextractor source snr for registration
+    'aprad_default'        : 4, # default aperture radius in px
+    'aprad_range'          : [2, 13], # [minimum, maximum] aperture radius (px)
+    'sex-config-file'      : rootpath+'/setup/trappist_N.sex',
+    'mask_file'            : {},
+    #                        mask files as a function of x,y binning
+
+    # registration settings (Scamp)
+    'scamp-config-file'    : rootpath+'/setup/trappist_N.scamp',
+    'reg_max_mag'          : 16,
+    'reg_search_radius'    : 0.2, # deg
+    'source_tolerance': 'high',
+
+    # swarp settings
+    'copy_keywords'        : ('OBSERVAT,INSTRUME,EXPTIME,OBJECT,' +
+                              'DATE-OBS,RA,DEC,AIRMASS,TEL_KEYW,BINX,BINY,' +
+                              'FILTERS,MJD-MOBS'),
+    #                        keywords to be copied in image
+    #                        combination using swarp
+    'swarp-config-file'    : rootpath+'/setup/trappist_N.swarp',
+
+    # default catalog settings
+    'astrometry_catalogs'  : ['GAIA'],
+    'photometry_catalogs'  : ['PANSTARRS', 'SDSS-R9', 'APASS9']
+}
 
 # add telescope configurations to 'official' telescopes.py
 
@@ -763,6 +825,7 @@ implemented_telescopes.append('TRAPPIST-North')
 implemented_telescopes.append('Trappist')
 implemented_telescopes.append('LT2m')
 implemented_telescopes.append('Spacewatch-0.9m')
+implemented_telescopes.append('Robinson Mono')
 
 
 # translate INSTRUME (or others, see _pp_conf.py) header keyword into
@@ -779,7 +842,7 @@ instrument_identifiers['Andor Tech'] = 'ACP->NTM'
 instrument_identifiers['IO:O'] = 'LT2m' 
 #instrument_identifiers['Spacewatch Mosaic Camera'] = 'Spacewatch-0.9m' 
 instrument_identifiers['Spacewatch Mosaic Camera'] = 'Spacewatch 0.9-m f/3 prime focus'
-
+instrument_identifiers['ZWO ASI2600MM Pro'] = 'Robinson Mono' 
 
 # translate telescope keyword into parameter set defined here
 telescope_parameters['TRAPPIST'] = trappist_sud_param
@@ -792,4 +855,4 @@ telescope_parameters['C2PU/Omicron'] = C2PU_omicron_param
 telescope_parameters['ESO-NTT'] = NTT_EFOSC_param
 telescope_parameters['LT2m'] = liverpool2m_param
 #telescope_parameters['Spacewatch-0.9m'] = spacewatch_09m_param
-telescope_parameters['Spacewatch 0.9-m f/3 prime focus'] = spacewatch_09m_param
+telescope_parameters['Robinson Mono'] = robinson_param
