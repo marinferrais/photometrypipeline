@@ -1716,7 +1716,7 @@ class catalog(object):
         # check if element is either not nan or not a float
 
         def check_not_nan(x): return not np.isnan(x) if \
-            (type(x) is np.float_) else True
+            (type(x) is np.float64) else True
 
         indices = [i for i in indices if all([check_not_nan(self[i[0]][key])
                                               for key in extract_this_catalog]
