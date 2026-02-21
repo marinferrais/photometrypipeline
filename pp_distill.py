@@ -801,6 +801,7 @@ def save_phot(root, target=None, photerr=False, maxflag=3):
                  'ACP->Artemis':'Z25',
                  'Spacewatch-0.9m':'691',
                  'Spacewatch_0.9-m_f/3_prime_focus':'691',
+                 'Robinson_Mono':'W39',
                 }
     # 4954 Eric special case:
     if target == '4954':
