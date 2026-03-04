@@ -278,7 +278,13 @@ def moving_primary_target(catalogs, man_targetname, offset, is_asteroid=None,
                 print(cat.obj.replace('_', ' '), "identified")
                 message_shown = True
 
-    return objects
+    rocskid =  rocks.id(targetname)
+    if rocskid[1] != '':
+        targetname = rocskid[1]
+    else:
+        targetname = rocskid[0]
+
+    return objects, targetname
 
 
 def fixed_targets(fixed_targets_file, catalogs, display=True):
@@ -442,8 +448,9 @@ def serendipitous_asteroids(catalogs, display=True):
                                                   obj['V']))
             continue
 
-        objects += moving_primary_target(catalogs, obj['name'], (0, 0),
-                                         display=False)
+        objects_i, targetname = moving_primary_target(catalogs, obj['name'],
+                                                       (0, 0), display=False)
+        objects += objects_i
 
         logging.info(('asteroid {:s} added to '
                       'target pool').format(obj['name']))
@@ -503,8 +510,9 @@ def distill(catalogs, man_targetname, offset, fixed_targets_file, posfile,
 
     # check Horizons for primary target (if a moving target)
     if posfile is None and fixed_targets_file is None and asteroids is False:
-        objects += moving_primary_target(catalogs, man_targetname, offset,
-                                         display=display)
+        objects_i, targetname = moving_primary_target(catalogs, man_targetname,
+                                        offset, display=display)
+        objects += objects_i
 
     # add fixed target
     if fixed_targets_file is not None:
@@ -746,13 +754,14 @@ def distill(catalogs, man_targetname, offset, fixed_targets_file, posfile,
             print('extracting thumbnail images')
         logging.info(' ~~~~~~~~~ creating diagnostic output')
         diag.add_results(output)
-    targetname =  next(iter(targetnames)).translate(_pp_conf.target2filename)
-    save_phot(os.getcwd(), target=targetname, maxflag=maxflag)
+    target_file =  next(iter(targetnames)).translate(_pp_conf.target2filename)
+    save_phot(os.getcwd(), target=targetname, target_file=target_file,
+               maxflag=maxflag)
 
     return output
 
 
-def save_phot(root, target=None, photerr=False, maxflag=3):
+def save_phot(root, target=None, target_file=None, photerr=False, maxflag=3):
     from glob import glob
     # save results as epochJD, mag , mag err
     night = root.split('/')[-1]
@@ -764,8 +773,12 @@ def save_phot(root, target=None, photerr=False, maxflag=3):
         date = night.split('_')[-2].split('-').merge()
     if not target:
         target = night.split('_')[0].lstrip('0')
-    if target == '2025_N1':
-        target = 'ATLAS'
+    #if target == '2025_N1':
+    #    target = 'ATLAS'
+
+
+    phot_file = f"photometry_{target_file}.dat"
+    """
     try:
         print(f"> Try reading photometry from : photometry_{target.lstrip('0')}*.dat") 
         phot_file = glob(f"photometry_{target.lstrip('0')}*.dat")[0]
@@ -777,6 +790,7 @@ def save_phot(root, target=None, photerr=False, maxflag=3):
             targetname2 = f'{target[:4]}_{target[4:]}'
             print(f'> Try reading photometry from : photometry_*_{targetname2}*.dat') 
             phot_file = glob(f'photometry_*_{targetname2}*.dat')[0]
+    """
     
     # DAT file 
     phot_res = np.genfromtxt(phot_file)
@@ -803,11 +817,7 @@ def save_phot(root, target=None, photerr=False, maxflag=3):
                  'Spacewatch_0.9-m_f/3_prime_focus':'691',
                  'Robinson_Mono':'W39',
                 }
-    # 4954 Eric special case:
-    if target == '4954':
-         maxflag = 3
-    elif target == '887' or target == '602' or target == '2010EW45' or target == '1999XA143': # 
-         maxflag = 4
+
     t = Table.read(phot_file,format='ascii.commented_header')
     #print(target)
     print(t)
@@ -822,7 +832,8 @@ def save_phot(root, target=None, photerr=False, maxflag=3):
     t['[7]'].name = 'band'
     t['[5]'].name = 'texp'
     t['[9]'].name = 'observatory'
-    t['observatory'] = [name_dict[obs] for obs in t['observatory']]
+    obsparam = _pp_conf.telescope_parameters[t['observatory'][0]]
+    t['observatory'] =  [obsparam['observatory_code'] for obs in t['observatory']]
 
     #t[t['mag'] > 100]['mag'] = 99.99
 
