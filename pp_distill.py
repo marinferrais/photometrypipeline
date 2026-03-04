@@ -497,7 +497,7 @@ def distill(catalogs, man_targetname, offset, fixed_targets_file, posfile,
                 continue
             catalogs.append(cat)
 
-    # identify target names and types
+    # identify target names and types 
 
     objects = []  # one dictionary for each target
 
