@@ -316,12 +316,14 @@ def run_the_pipeline(filenames, man_targetname, man_filtername,
 
     # distill photometry results
     print('\n----- distill photometry results\n')
+
     distillate = pp_distill.distill(calibration['catalogs'],
                                     man_targetname, [0, 0],
                                     None, None,
                                     rejectionfilter,
                                     asteroids=asteroids,
-                                    display=True, diagnostics=True)
+                                    display=True, diagnostics=True,
+                                    refimage=filenames[0])
 
     targets = np.array(list(distillate['targetnames'].keys()))
     try:

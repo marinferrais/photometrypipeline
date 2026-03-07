@@ -466,7 +466,7 @@ def serendipitous_asteroids(catalogs, display=True):
 
 def distill(catalogs, man_targetname, offset, fixed_targets_file, posfile,
             rejectionfilter='pos', display=False, diagnostics=False,
-            variable_stars=False, asteroids=False, maxflag=3):
+            variable_stars=False, asteroids=False, maxflag=3, refimage=None):
     """
     distill wrapper
     """
@@ -475,7 +475,7 @@ def distill(catalogs, man_targetname, offset, fixed_targets_file, posfile,
     logging.info('starting distill with parameters: %s' %
                  (', '.join([('%s: %s' % (var, str(val))) for
                              var, val in list(locals().items())])))
-
+    
     output = {}
 
     # read in database files (if necessary)
@@ -755,14 +755,35 @@ def distill(catalogs, man_targetname, offset, fixed_targets_file, posfile,
         logging.info(' ~~~~~~~~~ creating diagnostic output')
         diag.add_results(output)
     target_file =  next(iter(targetnames)).translate(_pp_conf.target2filename)
+    
+
+
+    rocksid = next(iter(targetnames))
+    if rocksid[0] == '(':
+        rocksid = rocksid.replace('(','').replace(')','')
+    else:
+        rocksid = rocksid.split('_')[0]
+    rocksid = rocks.id(rocksid)
+    print(rocksid)
+    if np.isnan(rocksid[1]):
+        targetname = rocksid[0]
+    else:
+        targetname = rocksid[1]
+
+    if refimage:
+        header = fits.getheader(refimage)
+        filter = header['FILTER']
+    else:
+        filter = None
+    
     save_phot(os.getcwd(), target=targetname, target_file=target_file,
-               maxflag=maxflag)
+               maxflag=maxflag, filter=filter)
 
     return output
 
 
-def save_phot(root, target=None, target_file=None, photerr=False, maxflag=3):
-    from glob import glob
+def save_phot(root, target=None, target_file=None, photerr=False, maxflag=3,
+              filter=None):
     # save results as epochJD, mag , mag err
     night = root.split('/')[-1]
     night = night.replace('ACP->NTM', 'TN')
@@ -778,19 +799,7 @@ def save_phot(root, target=None, target_file=None, photerr=False, maxflag=3):
 
 
     phot_file = f"photometry_{target_file}.dat"
-    """
-    try:
-        print(f"> Try reading photometry from : photometry_{target.lstrip('0')}*.dat") 
-        phot_file = glob(f"photometry_{target.lstrip('0')}*.dat")[0]
-    except IndexError:
-        try:
-            print(f'> Try reading photometry from : photometry__{target}*.dat') 
-            phot_file = glob(f'photometry__{target}*.dat')[0]
-        except IndexError:
-            targetname2 = f'{target[:4]}_{target[4:]}'
-            print(f'> Try reading photometry from : photometry_*_{targetname2}*.dat') 
-            phot_file = glob(f'photometry_*_{targetname2}*.dat')[0]
-    """
+
     
     # DAT file 
     phot_res = np.genfromtxt(phot_file)
@@ -819,11 +828,12 @@ def save_phot(root, target=None, target_file=None, photerr=False, maxflag=3):
                 }
 
     t = Table.read(phot_file,format='ascii.commented_header')
-    #print(target)
     print(t)
     t = t[t['[8]'] <= maxflag]
     t['targetname'] = [target] * len(t)
-    t['filter'] = [night.split('_')[-1]] * len(t)
+    if filter is None:
+        filter = [night.split('_')[-1]] * len(t) # TODO fix this
+    t['filter'] = filter
     cols = ['targetname','julian_date','mag','sig','in_sig','filter','[7]','[5]','[9]']
     t = t[cols]
     t['julian_date'].name = 'epoch'
