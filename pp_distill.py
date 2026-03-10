@@ -764,11 +764,6 @@ def distill(catalogs, man_targetname, offset, fixed_targets_file, posfile,
     else:
         rocksid = rocksid.split('_')[0]
     rocksid = rocks.id(rocksid)
-    print(rocksid)
-    if np.isnan(rocksid[1]):
-        targetname = rocksid[0]
-    else:
-        targetname = rocksid[1]
 
     if refimage:
         header = fits.getheader(refimage)
@@ -776,7 +771,7 @@ def distill(catalogs, man_targetname, offset, fixed_targets_file, posfile,
     else:
         filter = None
     
-    save_phot(os.getcwd(), target=targetname, target_file=target_file,
+    save_phot(os.getcwd(), target=rocksid[0], target_file=target_file,
                maxflag=maxflag, filter=filter)
 
     return output
