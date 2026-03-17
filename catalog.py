@@ -929,6 +929,7 @@ class catalog(object):
                 write_table.rename_column(
                     'e_{:s}mag'.format(filtername),
                     'e_{:s}Johnsonmag'.format(filtername))
+        write_table = Table(list(write_table.columns.values()))
 
         # create header and write to database
         header = Table([[self.catalogname], [self.origin], [self.history],
@@ -1007,6 +1008,7 @@ class catalog(object):
                 self.data.rename_column(
                     'e_{:s}Johnsonmag'.format(filtername),
                     'e_{:s}mag'.format(filtername))
+        self.data = Table(list(self.data.columns.values()))
 
         return self.shape[0]
 
