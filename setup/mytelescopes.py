@@ -750,7 +750,8 @@ spacewatch_09m_param = {
 
 robinson_param = {
     'telescope_instrument' : 'ZWO ASI2600MM Pro', # telescope/instrument name
-    'telescope_keyword'    : 'Robinson Mono',  # telescope/instrument keyword
+    #'telescope_keyword'    : 'Robinson Mono',  # telescope/instrument keyword
+    'telescope_keyword'    : 'RCOS',  # telescope/instrument keyword
     'observatory_code'     : 'W39',         # MPC observatory code
     'secpix'               : (0.186, 0.186), # pixel size (arcsec)
                                             # before binning
@@ -780,7 +781,7 @@ robinson_param = {
                                          # pp_prepare
     'object'               : 'OBJECT',  # object name keyword
     'filter'               : 'FILTER',  # filter keyword
-    'filter_translations'  : {'Luminance': None},
+    'filter_translations'  : {'Luminance': None, 'Red': None, 'Blue': None},
                              # filtername translation dictionary
     'exptime'              : 'EXPTIME', # exposure time keyword (s)
     'airmass'              : 'AIRMASS', # airmass keyword
@@ -814,6 +815,75 @@ robinson_param = {
     'photometry_catalogs'  : ['PANSTARRS', 'SDSS-R9', 'APASS9']
 }
 
+lco_clamshell02_param = {
+    'telescope_instrument' : 'fs01', # telescope/instrument name
+    'telescope_keyword'    : '2m0-02',  # telescope/instrument keyword
+    'observatory_code'     : 'Q59',         # MPC observatory code
+    #'secpix'               : (0.152, 0.152), # pixel size (arcsec)
+    #'secpix'               : (0.152, 0.152), # pixel size (arcsec)
+    'secpix'               : (0.304, 0.304), # pixel size (arcsec)
+                                            # before binning
+    'ext_coeff'            : 0.05,          # typical extinction coefficient
+
+
+    # image orientation preferences
+    'flipx'                : True,
+    'flipy'                : False,
+    'rotate'               : 0,
+
+    # instrument-specific FITS header keywords
+    'binning'              : ('CCDSUM#blank0', 'CCDSUM#blank1'),
+                           # binning in x/y, '_blankN' denotes that both axes
+                           # are listed in one keyword, sep. by blanks
+    'extent'               : ('NAXIS1', 'NAXIS2'),   # N_pixels in x/y
+    'ra'                   : 'RA',  # telescope pointing, RA
+    'dec'                  : 'DEC', # telescope pointin, Dec
+    'radec_separator'      : ':',   # RA/Dec hms separator, use 'XXX'
+                                    # if already in degrees
+    'date_keyword'         : 'DATE-OBS', # obs date/time
+                                         # keyword; use
+                                         # 'date|time' if
+                                         # separate
+    'obsmidtime_jd'        : 'JD', # obs midtime jd keyword
+                                         # (usually provided by
+                                         # pp_prepare
+    'object'               : 'OBJECT',  # object name keyword
+    'filter'               : 'FILTER',  # filter keyword
+    'filter_translations': {'gp': 'g', 'rp': 'r',
+                            'ip': 'i', 'zp': 'z', 'w': None},
+                             # filtername translation dictionary
+    'exptime'              : 'EXPTIME', # exposure time keyword (s)
+    'airmass'              : 'AIRMASS', # airmass keyword
+
+
+    # source extractor settings
+    'source_minarea'       : 9, # default sextractor source minimum N_pixels
+    'source_snr': 3, # default sextractor source snr for registration
+    'aprad_default'        : 5, # default aperture radius in px
+    'aprad_range'          : [2, 10], # [minimum, maximum] aperture radius (px)
+    'sex-config-file'      : rootpath+'/setup/lcospec.sex',
+    'mask_file'            : {},
+    #                        mask files as a function of x,y binning
+
+    # registration settings (Scamp)
+    'scamp-config-file'    : rootpath+'/setup/lcospec.scamp',
+    'reg_max_mag'          : 18,
+    'reg_search_radius'    : 0.5, # deg
+    'source_tolerance': 'high',
+
+    # swarp settings
+    'copy_keywords'        : ('OBSERVAT,INSTRUME,EXPTIME,OBJECT,' +
+                              'DATE-OBS,RA,DEC,AIRMASS,TEL_KEYW,BINX,BINY,' +
+                              'FILTERS,MJD-MOBS'),
+    #                        keywords to be copied in image
+    #                        combination using swarp
+    'swarp-config-file'    : rootpath+'/setup/vatt4k.swarp',
+
+    # default catalog settings
+    'astrometry_catalogs'  : ['GAIA'],
+    'photometry_catalogs'  : ['PANSTARRS', 'SDSS-R9', 'APASS9']
+}
+
 # add telescope configurations to 'official' telescopes.py
 
 implemented_telescopes.append('TRAPPIST-South')
@@ -825,7 +895,9 @@ implemented_telescopes.append('TRAPPIST-North')
 implemented_telescopes.append('Trappist')
 implemented_telescopes.append('LT2m')
 implemented_telescopes.append('Spacewatch-0.9m')
-implemented_telescopes.append('Robinson Mono')
+implemented_telescopes.append('Robinson_Mono')
+implemented_telescopes.append('2m0-02')
+
 
 
 # translate INSTRUME (or others, see _pp_conf.py) header keyword into
@@ -842,7 +914,8 @@ instrument_identifiers['Andor Tech'] = 'ACP->NTM'
 instrument_identifiers['IO:O'] = 'LT2m' 
 #instrument_identifiers['Spacewatch Mosaic Camera'] = 'Spacewatch-0.9m' 
 instrument_identifiers['Spacewatch Mosaic Camera'] = 'Spacewatch 0.9-m f/3 prime focus'
-instrument_identifiers['ZWO ASI2600MM Pro'] = 'Robinson Mono' 
+instrument_identifiers['ZWO ASI2600MM Pro'] = 'Robinson_Mono' 
+instrument_identifiers['fs01'] = '2m0-02' 
 
 # translate telescope keyword into parameter set defined here
 telescope_parameters['TRAPPIST'] = trappist_sud_param
@@ -855,4 +928,5 @@ telescope_parameters['C2PU/Omicron'] = C2PU_omicron_param
 telescope_parameters['ESO-NTT'] = NTT_EFOSC_param
 telescope_parameters['LT2m'] = liverpool2m_param
 #telescope_parameters['Spacewatch-0.9m'] = spacewatch_09m_param
-telescope_parameters['Robinson Mono'] = robinson_param
+telescope_parameters['Robinson_Mono'] = robinson_param
+telescope_parameters['2m0-02'] = lco_clamshell02_param

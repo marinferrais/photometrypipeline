@@ -811,17 +811,6 @@ def save_phot(root, target=None, target_file=None, photerr=False, maxflag=3,
         except AttributeError:
             print('No data?')
 
-    # OBS table
-    name_dict = {'ACP->NTM':'Z53',
-                 'TRAPPIST':'I40',
-                 'TRAPPIST-S':'I40',
-                 'Artemis':'Z25',
-                 'ACP->Artemis':'Z25',
-                 'Spacewatch-0.9m':'691',
-                 'Spacewatch_0.9-m_f/3_prime_focus':'691',
-                 'Robinson_Mono':'W39',
-                }
-
     t = Table.read(phot_file,format='ascii.commented_header')
     print(t)
     t = t[t['[8]'] <= maxflag]
