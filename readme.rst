@@ -21,7 +21,7 @@ Install from github
   git clone https://github.com/marinferrais/photometrypipeline
 
 
-Update with 
+Update with (inside PP directory)
 
   git pull
 
@@ -40,14 +40,14 @@ Create conda environment
   bash ~/Miniconda3-latest-Linux-x86_64.sh
 
   conda create --name pp python=3.12
-  
+
   conda activate pp
 
 Install python pakages
 
   pip install --upgrade --user numpy scipy astropy astroquery matplotlib pandas future scikit-image space-rocks
 
-Install other requred software
+Install other required softwares
 
   conda install -c conda-forge astromatic-swarp astromatic-scamp astromatic-source-extractor
 
@@ -57,7 +57,7 @@ Make a new dictionary for your observatory if need in
 
   photometrypipeline/setup/mytelescopes.py
 
-Separate your data by observatory, target, filter, binning and continuous field in their own folder
+Separate your data in their own folder by observatory, target, filter, and continuous field
 
 Typical command to run PP (adapt to your case, especially the aperture)
 
