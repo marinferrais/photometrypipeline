@@ -27,9 +27,9 @@ Update with
 
 Add to your .bashrc (change <pathto> to where you installed PP)
 
-|  # photometry pipeline setup
-|  export PHOTPIPEDIR=/<pathto>/photometrypipeline
-|  export PATH=$PATH:/<pathto>/photometrypipeline/
+  # photometry pipeline setup<br />
+  export PHOTPIPEDIR=/<pathto>/photometrypipeline<br />
+  export PATH=$PATH:/<pathto>/photometrypipeline/
 
 Create conda environment
 
