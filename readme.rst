@@ -10,6 +10,63 @@ aperture photometry. PP has been designed for asteroid observations,
 but can be used with any kind of imaging data.
 
 
+
+New Readme
+----------
+
+Installation
+------------
+Install from github
+
+  git clone https://github.com/marinferrais/photometrypipeline
+
+
+Update with 
+
+  git pull
+
+Create conda environment
+
+  curl -O https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+  bash ~/Miniconda3-latest-Linux-x86_64.sh
+  conda create --name pp python=3.12
+  conda activate pp
+
+Install python pakages
+
+  pip install --upgrade --user numpy scipy astropy astroquery matplotlib pandas future scikit-image space-rocks
+
+Install other requred software
+
+  conda install -c conda-forge astromatic-swarp astromatic-scamp astromatic-source-extractor
+
+Usage
+------------
+Make a new dictionary for your observatory if need in 
+
+  photometrypipeline/setup/mytelescopes.py
+
+Separate your data by observatory, target, filter, binning and continuous field in their own folder
+
+Typical command to run PP (adapt to your case, especially the aperture)
+
+  pp_run *fits -solar -filter R -fixed_aprad 7
+
+The photometric data will be in
+  
+  photometry<target name>.dat
+
+And a summary table (astropy ascii.rst format) is in:
+
+  <targetname>_<observatory>_<date>_<filter>.obs
+
+
+
+MM Readme
+---------
+
+  git clone https://github.com/marinferrais/photometrypipeline
+
 Please note that this project is still under development. 
 
 See `this document`_ for a list of supported instruments and catalogs.
