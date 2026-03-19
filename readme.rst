@@ -36,8 +36,11 @@ Add to your .bashrc (change <pathto> to where you installed PP)
 Create conda environment
 
   curl -O https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+
   bash ~/Miniconda3-latest-Linux-x86_64.sh
+
   conda create --name pp python=3.12
+  
   conda activate pp
 
 Install python pakages
