@@ -25,6 +25,12 @@ Update with
 
   git pull
 
+Add to your .bashrc (change <pathto> to where you installed PP)
+
+  # photometry pipeline setup
+  export PHOTPIPEDIR=/<pathto>/photometrypipeline
+  export PATH=$PATH:/<pathto>/photometrypipeline/
+
 Create conda environment
 
   curl -O https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
