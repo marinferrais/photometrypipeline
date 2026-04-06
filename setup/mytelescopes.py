@@ -929,4 +929,5 @@ telescope_parameters['ESO-NTT'] = NTT_EFOSC_param
 telescope_parameters['LT2m'] = liverpool2m_param
 #telescope_parameters['Spacewatch-0.9m'] = spacewatch_09m_param
 telescope_parameters['Robinson_Mono'] = robinson_param
+telescope_parameters['RCOS'] = robinson_param
 telescope_parameters['2m0-02'] = lco_clamshell02_param
