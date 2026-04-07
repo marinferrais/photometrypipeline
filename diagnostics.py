@@ -25,7 +25,7 @@ import logging
 import subprocess
 
 from astropy.io import fits
-from astropy.visualization import (ZScaleInterval, ImageNormalize,
+from astropy.visualization import (PercentileInterval, ZScaleInterval, ImageNormalize,
                                    LogStretch, LinearStretch)
 from astropy.time import Time
 from astropy import wcs
