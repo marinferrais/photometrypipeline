@@ -252,10 +252,34 @@ class Prepare_Diagnostics(Diagnostics_Html):
         plt.figure(figsize=(self.conf.image_size_lg_in,
                             self.conf.image_size_lg_in))
 
+        #norm = ImageNormalize(
+        #    imgdat, interval=ZScaleInterval(),
+        #    stretch={'linear': LinearStretch(),
+        #             'log': LogStretch()}[self.conf.image_stretch])
+
+        # Detect if image is already normalized (0-1 range)
+        img_min = np.nanmin(imgdat)
+        img_max = np.nanmax(imgdat)
+        
+        if img_max <= 1.0 and img_min >= 0.0:
+            # Already normalized — use percentile instead of ZScale
+            interval = PercentileInterval(99.5)
+        else:
+            interval = ZScaleInterval()
+        
+        vmin, vmax = interval.get_limits(imgdat)
+        
+        # Safety fallback
+        if vmin >= vmax:
+            vmin = np.nanpercentile(imgdat, 5)
+            vmax = np.nanpercentile(imgdat, 95)
+        
         norm = ImageNormalize(
-            imgdat, interval=ZScaleInterval(),
+            imgdat,
+            vmin=vmin, vmax=vmax,
             stretch={'linear': LinearStretch(),
-                     'log': LogStretch()}[self.conf.image_stretch])
+                     'log': LogStretch()}[self.conf.image_stretch]
+        )
 
         img = plt.imshow(imgdat, cmap='gray', norm=norm,
                          origin='lower')
