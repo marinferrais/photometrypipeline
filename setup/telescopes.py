@@ -3328,6 +3328,137 @@ janus_sud_param = {
     'photometry_catalogs'  : ['SDSS-R9', 'PANSTARRS', 'APASS9']
 }
 
+ttt1_param = {
+
+    'telescope_instrument': 'TTT1/QHY411-TTT1',  # telescope/instrument name
+    'telescope_keyword': 'TTT1',  # telescope/instrument keyword
+    'observatory_code': 'Y65',  # MPC observatory code
+    'secpix': (0.14, 0.14),  # pixel size (arcsec) before binning
+
+    # image orientation preferences
+    'flipx': True,
+    'flipy': False,
+    'rotate': 0,
+
+    # instrument-specific FITS header keywords
+    'binning': ('XBINNING', 'YBINNING'),  # binning in x/y
+    'extent': ('NAXIS1', 'NAXIS2'),  # N_pixels in x/y
+    'ra': 'POINTRA',  # telescope pointing, RA
+    'dec': 'POINTDEC',  # telescope pointin, Dec
+    'radec_separator': 'XXX',  # RA/Dec hms separator, use 'XXX'
+    # if already in degrees
+    'date_keyword': 'DATE-OBS',  # obs date/time
+    # keyword; use
+    # 'date|time' if
+    # separate
+    'obsmidtime_jd': 'JD-OBS',  # obs midtime jd keyword
+    # (usually provided by
+    # pp_prepare
+    'object': 'OBJECT',  # object name keyword
+    'filter': 'FILTER',  # filter keyword
+    'filter_translations': {'Lum': 'lum', 'SDSSg': 'g',
+                            'SDSSr': 'r', 'SDSSi': 'i', 'SDSSzs': 'z'},
+    # filtername translation dictionary
+    'exptime': 'EXPTIME',  # exposure time keyword (s)
+    'airmass': 'AIRMASS',  # airmass keyword
+
+    # source extractor settings
+    'source_minarea': 8,  # default sextractor source minimum N_pixels
+    'source_snr': 3,  # default sextractor source snr for registration
+    'aprad_default': 6,  # default aperture radius in px
+    'aprad_range': [2, 10],  # [minimum, maximum] aperture radius (px)
+    'sex-config-file': rootpath + '/setup/ttt.sex',
+    'mask_file': {},
+    #                        mask files as a function of x,y binning
+    'zeropoint_keyword': 'ZP',
+
+    # scamp settings
+    'scamp-config-file': rootpath + '/setup/ttt.scamp',
+    'reg_max_mag': 19,
+    'reg_search_radius': 0.5,  # deg
+    'source_tolerance': 'high',
+
+    # swarp settings
+    'copy_keywords': ('OBSERVAT,INSTRUME,XBINNING,YBINNING,EXPTIME,FILTER,' +
+                      'OBJECT,AIRMASS,MJD-OBS,POINTRA,POINTDEC,RA,DEC,RAHMS,DECDMS,' +
+                      'DATE-OBS,TEL_KEYW'),
+    #                        keywords to be copied in image
+    #                        combination using swarp
+    'swarp-config-file': rootpath+'/setup/ttt.swarp',
+
+    # default catalog settings
+    'astrometry_catalogs': ['GAIADR3'],
+    'photometry_catalogs': ['PANSTARRS']
+    #'photometry_catalogs': ['SDSS-R9', 'APASS9', '2MASS']
+
+}
+
+ttt3_param = {
+    'telescope_instrument': 'TTT3/QHY600-TTT3',  # telescope/instrument name
+    'telescope_keyword': 'TTT3',  # telescope/instrument keyword
+    'observatory_code': 'Y68',  # MPC observatory code
+    'secpix': (0.231, 0.231),  # pixel size (arcsec) before binning
+
+    # image orientation preferences
+    'flipx': True,
+    'flipy': False,
+    'rotate': 0,
+
+    # instrument-specific FITS header keywords
+    'binning': ('XBINNING', 'YBINNING'),  # binning in x/y
+    'extent': ('NAXIS1', 'NAXIS2'),  # N_pixels in x/y
+    'ra': 'CRVAL1',  # telescope pointing, RA
+    'dec': 'CRVAL2',  # telescope pointing, Dec
+    #'ra': 'POINTRA',
+    #'dec': 'POINTDEC',
+    'radec_separator': 'XXX',  # RA/Dec hms separator, use 'XXX'
+    # if already in degrees
+    'date_keyword': 'DATE-OBS',  # obs date/time
+    # keyword; use
+    # 'date|time' if
+    # separate
+    'obsmidtime_jd': 'JD-OBS',  # obs midtime jd keyword
+    # (usually provided by
+    # pp_prepare
+    'object': 'OBJECT',  # object name keyword
+    'filter': 'FILTER',  # filter keyword
+    'filter_translations': {'Lum': 'lum', 'SDSSg': 'g',
+                            'SDSSr': 'r', 'SDSSi': 'i', 'SDSSzs': 'z'},
+    # filtername translation dictionary
+    'exptime': 'EXPTIME',  # exposure time keyword (s)
+    'airmass': 'AIRMASS',  # airmass keyword
+
+    # source extractor settings
+    'source_minarea': 8,  # default sextractor source minimum N_pixels
+    'source_snr': 3,  # default sextractor source snr for registration
+    'aprad_default': 6,  # default aperture radius in px
+    'aprad_range': [2, 10],  # [minimum, maximum] aperture radius (px)
+    'sex-config-file': rootpath + '/setup/ttt.sex',
+    'mask_file': {},
+    #                        mask files as a function of x,y binning
+    'zeropoint_keyword': 'ZP',
+
+    # scamp settings
+    'scamp-config-file': rootpath + '/setup/ttt.scamp',
+    'reg_max_mag': 19,
+    'reg_search_radius': 0.5,  # deg
+    'source_tolerance': 'high',
+
+    # swarp settings
+    'copy_keywords': ('OBSERVAT,INSTRUME,XBINNING,YBINNING,EXPTIME,FILTER,' +
+                      'OBJECT,AIRMASS,MJD-OBS,POINTRA,POINTDEC,RA,DEC,RAHMS,DECDMS,' +
+                      'DATE-OBS,TEL_KEYW'),
+    #                        keywords to be copied in image
+    #                        combination using swarp
+    'swarp-config-file': rootpath+'/setup/ttt.swarp',
+
+    # default catalog settings
+    'astrometry_catalogs': ['GAIADR3'],
+    'photometry_catalogs': ['SDSS-R16','PANSTARRS','ATLAS']
+    #'photometry_catalogs': ['SDSS-R9', 'APASS9', '2MASS']
+}
+
+
 # access functions for telescope configurations
 
 
@@ -3345,7 +3476,7 @@ implemented_telescopes = ['VATT4K', 'DCTLMI', 'ARC35ARCTIC',
                           'LCOSBIGKB78', 'ARC35SPICAM', 'LCOSINFL03',
                           'LCOSINFL16', 'LCOSINFL11', 'LCOSINFA15',
                           'LCOSPECFS01', 'P60OPT', 'P60SEDM', 'GMOSN',
-                          'DFOSC', 'LONEOS']
+                          'DFOSC', 'LONEOS','TTT1', 'TTT3']
 
 # translate INSTRUME (or others, see _pp_conf.py) header keyword into
 # PP telescope keyword
@@ -3404,7 +3535,11 @@ instrument_identifiers = {'= "Vatt4k"':        'VATT4K',
                           'Rainbow Cam': 'P60SEDM',
                           'GMOS-N': 'GMOSN',
                           'DFOSC_FASU': 'DFOSC',
-                          'loneos': 'LONEOS', }
+                          'loneos': 'LONEOS', 
+                          'iKon936-TTT3' : 'TTT3',
+                          'QHY600-TTT3' : 'TTT3',
+                          'QHY411-TTT1' : 'TTT1',
+}
 
 # translate telescope keyword into parameter set defined here
 telescope_parameters = {'VATT4K':        vatt4k_param,
@@ -3454,8 +3589,10 @@ telescope_parameters = {'VATT4K':        vatt4k_param,
                         'P60SEDM': p60sedm_param,
                         'GMOSN': gmosn_param,
                         'DFOSC': dfosc_param,
-                        'LONEOS': loneos_param, }
-
+                        'LONEOS': loneos_param,
+                         'TTT3' : ttt3_param,
+                         'TTT1' : ttt1_param,
+}
 
 # append mytelescopes.py, if available
 #
