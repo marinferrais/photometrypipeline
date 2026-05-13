@@ -817,7 +817,7 @@ def save_phot(root, target=None, target_file=None, photerr=False, maxflag=3,
 
     # write target positions to file
     outf = open('positions.dat', 'w')
-    outf.write('#                                         filename        midtime_JD          RA        Dec\n')
+    outf.write('#                                         filename          RA        Dec           midtime_JD\n')
     for row in t:
         outf.write('%50.50s   %9.5f  %9.5f   %18.9f\n' % (row['filename'],
                                                           row['source_ra'],
