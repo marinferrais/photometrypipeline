@@ -814,6 +814,16 @@ def save_phot(root, target=None, target_file=None, photerr=False, maxflag=3,
     t = Table.read(phot_file,format='ascii.commented_header')
     print(t)
     t = t[t['[8]'] <= maxflag]
+
+    # write target positions to file
+    outf = open('positions.dat', 'w')
+    outf.write('#                                         filename        midtime_JD          RA        Dec\n')
+    for row in t:
+        outf.write('%50.50s   %9.5f  %9.5f   %18.9f\n' % (row['filename'],
+                                                          row['source_ra'],
+                                                          row['source_dec'],
+                                                          row['julian_date']))
+    
     t['targetname'] = [target] * len(t)
     if filter is None:
         filter = [night.split('_')[-1]] * len(t) # TODO fix this
