@@ -1423,6 +1423,34 @@ class Distill_Diagnostics(Diagnostics_Html):
                                           self.conf.image_size_thumb_in))
                 img = plt.imshow(thumbdata, cmap='gray',
                                  origin='lower', norm=norm)
+
+               # place aperture
+                if _pp_conf.photmode == 'APER':
+                    aprad = float(hdulist[0].header['APRAD'])
+                    targetpos = plt.Circle(
+                        (self.conf.image_size_thumb_px/2,
+                         self.conf.image_size_thumb_px/2),
+                        aprad, ec='red', fc='none',
+                        linewidth=self.conf.thumb_linewidth)
+                else:
+                    targetpos = plt.Rectangle(
+                        (self.conf.image_size_thumb_px/2-7,
+                         self.conf.image_size_thumb_px/2-7),
+                        15, 15, ec='red', fc='none',
+                        linewidth=self.conf.thumb_linewidth)
+                plt.gca().add_patch(targetpos)
+
+                # place predicted position (if within thumbnail)
+                if ((abs(exp_x-obj_x) <=
+                     self.conf.image_size_thumb_px/2) and
+                        (abs(exp_y-obj_y) <=
+                         self.conf.image_size_thumb_px/2)):
+                    plt.scatter(exp_x-obj_x+self.conf.image_size_thumb_px/2,
+                                exp_y-obj_y+self.conf.image_size_thumb_px/2,
+                                marker="x",
+                                s=2,
+                                color=self.conf.thumb_predicted_pos_color)
+
                 # remove axes
                 plt.axis('off')
                 img.axes.get_xaxis().set_visible(False)
