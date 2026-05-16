@@ -1389,11 +1389,34 @@ class Distill_Diagnostics(Diagnostics_Html):
                         int(obj_x-self.conf.image_size_thumb_px/2):
                         int(obj_x+self.conf.image_size_thumb_px/2)]
 
+                #norm = ImageNormalize(
+                #    thumbdata, interval=ZScaleInterval(),
+                #    stretch={'linear': LinearStretch(),
+                #             'log': LogStretch()}[
+                #                 self.conf.image_stretch])
+
+                img_min = np.nanmin(thumbdata)
+                img_max = np.nanmax(thumbdata)
+                
+                if img_max <= 1.0 and img_min >= 0.0:
+                    # Already normalized — use percentile instead of ZScale
+                    interval = PercentileInterval(99.5)
+                else:
+                    interval = ZScaleInterval()
+                
+                vmin, vmax = interval.get_limits(thumbdata)
+                
+                # Safety fallback
+                if vmin >= vmax:
+                    vmin = np.nanpercentile(thumbdata, 5)
+                    vmax = np.nanpercentile(thumbdata, 95)
+                
                 norm = ImageNormalize(
-                    thumbdata, interval=ZScaleInterval(),
+                    thumbdata,
+                    vmin=vmin, vmax=vmax,
                     stretch={'linear': LinearStretch(),
-                             'log': LogStretch()}[
-                                 self.conf.image_stretch])
+                             'log': LogStretch()}[self.conf.image_stretch]
+                )
 
                 # create plot
                 fig = plt.figure(figsize=(self.conf.image_size_thumb_in,
