@@ -31,6 +31,7 @@ import sqlite3
 from astroquery.jplhorizons import Horizons
 from astropy.io import ascii
 from astropy.table import Table
+import re
 
 import rocks
 
@@ -167,6 +168,25 @@ def pick_controlstar(catalogs, display=True):
     return objects
 
 
+def get_eph_comets(error_msg, id, location, epochs, id_type):
+    # Parse record numbers and epochs from error message
+    records = re.findall(r'(\d{8})\s+(\d{4})\s', error_msg)
+
+    if not records:
+        raise ValueError(f"Could not parse ambiguous target error: {error_msg}")
+
+    # Select record with highest epoch year
+    best_record = max(records, key=lambda x: int(x[1]))
+    record_id = best_record[0]
+
+    print(f"Ambiguous target '{id}' — using most recent record "
+          f"#{record_id} (epoch {best_record[1]})")
+
+    # Re-query using the specific record number
+    obj = Horizons(id=record_id, location=location, epochs=epochs, id_type=id_type)
+    eph = obj.ephemerides()
+    return eph
+
 def moving_primary_target(catalogs, man_targetname, offset, is_asteroid=None,
                           display=True):
     """
@@ -192,7 +212,9 @@ def moving_primary_target(catalogs, man_targetname, offset, is_asteroid=None,
         if man_targetname is not None:
             targetname = man_targetname.replace('_', ' ')
         else:
-            targetname = rocks.id(targetname)[0]
+            rocksid = rocks.id(targetname)[0]
+            if rocksid is not None:
+                targetname = rocksid
         cat.obj = targetname
         for smallbody in [True, False]:
             #obj = Horizons(targetname,
@@ -201,20 +223,28 @@ def moving_primary_target(catalogs, man_targetname, offset, is_asteroid=None,
                                     False: 'majorbody'}[smallbody],
                            epochs=cat.obstime[0],
                            location=obsparam['observatory_code'])
+
             n = 0
             try:
                 eph = obj.ephemerides()
                 n = len(eph)
-            except ValueError:
-                if display and smallbody is True:
-                    print("'%s' is not a small body" % targetname)
-                    logging.warning("'%s' is not a small body" %
-                                    targetname)
-                if display and smallbody is False:
-                    print("'%s' is not a Solar System object" % targetname)
-                    logging.warning("'%s' is not a Solar System object" %
-                                    targetname)
-                pass
+            except Exception as e:
+                error_msg = str(e)
+
+                # Check if it's an ambiguity error
+                if 'Ambiguous target name' in error_msg:
+                    eph = get_eph_comets(error_msg, targetname.replace('_', ' '), obsparam['observatory_code'], cat.obstime[0], 'smallbody')
+                    n = len(eph)
+                if 'ValueError' in error_msg:
+                    if display and smallbody is True:
+                        print("'%s' is not a small body" % targetname)
+                        logging.warning("'%s' is not a small body" %
+                                        targetname)
+                    if display and smallbody is False:
+                        print("'%s' is not a Solar System object" % targetname)
+                        logging.warning("'%s' is not a Solar System object" %
+                                        targetname)
+                    pass
             if n > 0:
                 is_asteroid = smallbody
                 break
